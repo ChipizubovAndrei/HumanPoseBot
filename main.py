@@ -1,15 +1,15 @@
+import asyncio
 import time
 import logging
-import asyncio
+import os
+import shutil
 
 from aiogram import Bot, Dispatcher, executor, types
+from ultralytics import YOLO
 
-from model import *
-from utils import *
-
-TOKEN = ""
-SAVE_DIR = './'
-PREDICT_DIR = "./"
+TOKEN = "6702242434:AAEbPddOKw43zmjyNkLjS5ZlC-2wMRX9yRw"
+MODEL_PATH = 'models/yolov8n-pose.pt'
+SAVE_DIR = './tmp'
 
 logging.basicConfig(level=logging.INFO)
 
@@ -26,23 +26,26 @@ async def start_handler(message: types.Message):
 
 @dp.message_handler(content_types=["photo"])
 async def photo_handler(message: types.Message):
-    image_name = 'user_photo.jpg'
-    predicted_image = 'predict_photo.jpg'
+    user_id = str(message.from_user.id)
+    user_save_dir = os.path.join(SAVE_DIR, user_id)
+    os.mkdir(user_save_dir)
+    image_name = os.path.join(user_save_dir, 'image.jpg')
+    predicted_image = os.path.join(user_save_dir, 'predict', 'image.jpg')
     await message.photo[-1].download(destination_file=image_name)
 
-    '''
-    TODO
-    Предсказания модели
-    '''
+    model = YOLO(MODEL_PATH)
+    results = model(image_name, project=user_save_dir, save=True)
 
-    await bot.send_photo(message.chat.id, open(image_name, 'rb'))
+    await bot.send_photo(message.chat.id, open(predicted_image, 'rb'))
 
-    clearup_images(SAVE_DIR)
-    clearup_images(PREDICT_DIR)
+    shutil.rmtree(user_save_dir)
 
 @dp.message_handler(content_types=["document"])
 async def photo_handler(message: types.Message):
     await message.reply(f"Отправьте фото, а не документ")
 
 if __name__ == "__main__":
+    if not os.path.exists(SAVE_DIR):
+        os.mkdir(SAVE_DIR)
+
     executor.start_polling(dp)
