@@ -7,7 +7,7 @@ import shutil
 from aiogram import Bot, Dispatcher, executor, types
 from ultralytics import YOLO
 
-TOKEN = "6702242434:AAEbPddOKw43zmjyNkLjS5ZlC-2wMRX9yRw"
+TOKEN = ""
 MODEL_PATH = 'models/yolov8n-pose.pt'
 SAVE_DIR = './tmp'
 
