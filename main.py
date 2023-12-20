@@ -8,10 +8,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from model import poseEstimator
 
 TOKEN = ""
-<<<<<<< HEAD
-=======
 MODEL_PATH = 'models/yolov8n-pose.pt'
->>>>>>> e84ae94ac7a36ad637bbcd97a780dc68e8ed1c22
 SAVE_DIR = './tmp'
 
 logging.basicConfig(level=logging.INFO)
@@ -26,12 +23,6 @@ async def start_handler(message: types.Message):
     user_full_name = message.from_user.full_name
     logging.info(f'{user_id} {user_full_name} {time.asctime()}')
     await message.reply(f"Привет, {user_full_name}!")
-
-@dp.message_handler(content_types=["text"])
-async def text_handler(message: types.Message):
-    question = message.text
-    answer = talker([question])
-    await message.reply(answer[0])
 
 @dp.message_handler(content_types=["photo"])
 async def photo_handler(message: types.Message):
