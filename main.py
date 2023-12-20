@@ -8,6 +8,10 @@ from aiogram import Bot, Dispatcher, executor, types
 from model import poseEstimator
 
 TOKEN = ""
+<<<<<<< HEAD
+=======
+MODEL_PATH = 'models/yolov8n-pose.pt'
+>>>>>>> e84ae94ac7a36ad637bbcd97a780dc68e8ed1c22
 SAVE_DIR = './tmp'
 
 logging.basicConfig(level=logging.INFO)
