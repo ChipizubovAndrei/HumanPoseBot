@@ -5,10 +5,9 @@ import os
 import shutil
 
 from aiogram import Bot, Dispatcher, executor, types
-from ultralytics import YOLO
+from model import poseEstimator
 
-TOKEN = "YOUR_TOKEN"
-MODEL_PATH = 'models/yolov8n-pose.pt'
+TOKEN = ""
 SAVE_DIR = './tmp'
 
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +23,12 @@ async def start_handler(message: types.Message):
     logging.info(f'{user_id} {user_full_name} {time.asctime()}')
     await message.reply(f"Привет, {user_full_name}!")
 
+@dp.message_handler(content_types=["text"])
+async def text_handler(message: types.Message):
+    question = message.text
+    answer = talker([question])
+    await message.reply(answer[0])
+
 @dp.message_handler(content_types=["photo"])
 async def photo_handler(message: types.Message):
     user_id = str(message.from_user.id)
@@ -33,8 +38,7 @@ async def photo_handler(message: types.Message):
     predicted_image = os.path.join(user_save_dir, 'predict', 'image.jpg')
     await message.photo[-1].download(destination_file=image_name)
 
-    model = YOLO(MODEL_PATH)
-    results = model(image_name, project=user_save_dir, save=True)
+    results = poseEstimator(image_name, project=user_save_dir, save=True)
 
     await bot.send_photo(message.chat.id, open(predicted_image, 'rb'))
 
